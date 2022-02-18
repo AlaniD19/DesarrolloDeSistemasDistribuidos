@@ -1,25 +1,47 @@
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 public class PI{
-    double valorPI = 0;
+    static double valorPI = 0;
 
     static class Worker extends Thread{
             int nodo;
             Worker(int nodo){
                     this.nodo = nodo;
             }
-            public void run(){
-                    //conectarse al servidor "localhost al puerto 50000+nodo con re esperar la sumatoria
-                    //pi += sumatoria(sincronizarlo)
+            public synchronized void run(){
+                Socket conexion = null;
+                for(;;) {
+                    try {
+                        conexion = new Socket("localhost", 50000+nodo);
+                        DataInputStream entrada = new DataInputStream(conexion.getInputStream());
+
+                        double x = entrada.readDouble();
+                        valorPI += x;
+
+                        conexion.close();
+                        break;
+                    } catch (Exception e) {
+                        try {
+                            Worker.sleep(100);
+                        } catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+                //conectarse al servidor "localhost al puerto 50000+nodo con re esperar la sumatoria
+                //pi += sumatoria(sincronizarlo)
             }
     }
 
     public static void main(String[] args) throws IOException{
         
-            int nodo = 1;
+            int nodo = Integer.parseInt(args[0]);
            // int nodo = convertir args[0] a entero;
             
             if(nodo == 0){
@@ -30,9 +52,7 @@ public class PI{
                     //desplegar el valor de la variable "pi"
             }else{                
                 ServerSocket servidor = new ServerSocket(50000 + nodo); //abrir el puerto 5000+nodo
-                
                 Socket conexion = servidor.accept();    //esperar la conexión del cliente
-                
                 DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
                 
                 double subSuma = 0;
