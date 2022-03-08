@@ -6,7 +6,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.FileOutputStream;
 /*
-para ejecutar esta vaina es java TokenRing_secureSockets_2 #NODO IP
+para ejecutar este programa es java TokenRing_secureSockets_2 #NODO 
 
 La IP es consecutiva en cada nodo para unirse al grupo de hilos
 ejemplo
@@ -25,7 +25,7 @@ class TokenRing_secureSocket_2{
 	static DataOutputStream salida;
 	static boolean inicio = true;
 	static int nodo;
-    static String ip;
+    static String ip = "localhost";
     static short token = 0;
 
 	static class Worker extends Thread{
@@ -46,8 +46,7 @@ class TokenRing_secureSocket_2{
 	}
 
 	public static void main(String[] args) throws Exception{
-		nodo = Integer.valueOf(args[0]);
-        ip = args[1];
+		nodo = Integer.parseInt(args[0]);
 
 		Worker w = new Worker();
 		w.start();
@@ -60,7 +59,7 @@ class TokenRing_secureSocket_2{
 		for(;;){
 			try{
 				SSLSocketFactory cliente = (SSLSocketFactory) SSLSocketFactory.getDefault();
-        		conexion = cliente.createSocket(ip, 50000+(nodo+1)%6);
+        		conexion = cliente.createSocket(ip, 50000+(nodo)%6);
 				break;
 			}catch(Exception e){
 				Thread.sleep(1000);
