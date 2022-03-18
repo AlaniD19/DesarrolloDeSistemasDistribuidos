@@ -59,7 +59,6 @@ charset.setAccessible(true);
 charset.set(null,null);
 
         new Worker().start();
-        //String nombre_usuario = "Ana";
         String nombre_usuario = args[0];
         //En un ciclo infinito se leera cada mensaje del teclado y se enviará el mensaje al 
         //grupo 230.0.0.0 a través del puerto 50000
