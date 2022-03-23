@@ -1,11 +1,14 @@
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 public class Chat {
     
@@ -38,7 +41,7 @@ public class Chat {
                 
                 for(;;){
                     byte[] mensaje_en_bytes = recibe_mensaje_multicast(socket, 1000);
-                    String mensaje = new String(mensaje_en_bytes, "UTF-8");
+                    String mensaje = new String(mensaje_en_bytes, "CP850");
                     System.out.println(mensaje);
                 }
             } catch (IOException ex) {
@@ -49,15 +52,20 @@ public class Chat {
     }
     
     public static void main(String[] args) throws Exception{
+
+System.setProperty("file.encoding","CP850");
+Field charset = Charset.class.getDeclaredField("defaultCharset");
+charset.setAccessible(true);
+charset.set(null,null);
+
         new Worker().start();
-        String nombre_usuario = "Ana";
-        //String nombre_usuario = args[0];
+        String nombre_usuario = args[0];
         //En un ciclo infinito se leera cada mensaje del teclado y se enviará el mensaje al 
         //grupo 230.0.0.0 a través del puerto 50000
         System.out.println("Usuario: " + nombre_usuario);
         for(;;){
             System.out.println("Ingrese el mensaje a enviar: ");
-            Scanner scanner = new Scanner(System.in);
+		  Scanner scanner = new Scanner(System.in, "CP850");
             String mensaje = scanner.nextLine();
             
             System.setProperty("java.net.preferIPv4Stack", "true");
